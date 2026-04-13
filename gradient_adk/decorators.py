@@ -3,20 +3,27 @@
 from __future__ import annotations
 
 from functools import wraps
+from threading import RLock
 from typing import Any, Callable, Optional, TypeVar
 
 F = TypeVar("F", bound=Callable[..., Any])
 
-_ENTRYPOINT: Optional[Callable[..., Any]] = None
+_ENTRYPOINTS: dict[str, Callable[..., Any]] = {}
+_ENTRYPOINTS_LOCK = RLock()
 
 
-def get_entrypoint() -> Optional[Callable[..., Any]]:
-    return _ENTRYPOINT
+def get_entrypoint(module_name: str | None = None) -> Optional[Callable[..., Any]]:
+    with _ENTRYPOINTS_LOCK:
+        if module_name is not None:
+            return _ENTRYPOINTS.get(module_name)
+        if not _ENTRYPOINTS:
+            return None
+        return next(reversed(_ENTRYPOINTS.values()))
 
 
 def entrypoint(func: F) -> F:
-    global _ENTRYPOINT
-    _ENTRYPOINT = func
+    with _ENTRYPOINTS_LOCK:
+        _ENTRYPOINTS[func.__module__] = func
     setattr(func, "__gradient_entrypoint__", True)
     return func
 

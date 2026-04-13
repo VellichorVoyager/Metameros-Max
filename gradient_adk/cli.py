@@ -10,6 +10,13 @@ from typing import Any, Callable, Sequence
 
 from .server import run_server
 
+STARTER_AGENT_TEMPLATE = (
+    "from gradient_adk import entrypoint\n\n"
+    "@entrypoint\n"
+    "def entry(payload, context):\n"
+    "    return {'echo': payload}\n"
+)
+
 
 def _load_callable(target: str) -> Callable[[dict[str, Any], dict[str, Any]], Any]:
     if ":" not in target:
@@ -35,13 +42,7 @@ def _cmd_init(args: argparse.Namespace) -> int:
         print(f"File already exists: {target}", file=sys.stderr)
         return 1
 
-    target.write_text(
-        "from gradient_adk import entrypoint\n\n"
-        "@entrypoint\n"
-        "def entry(payload, context):\n"
-        "    return {'echo': payload}\n",
-        encoding="utf-8",
-    )
+    target.write_text(STARTER_AGENT_TEMPLATE, encoding="utf-8")
     print(f"Created starter agent at {target}")
     return 0
 
