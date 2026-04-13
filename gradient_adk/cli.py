@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import importlib
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -293,7 +294,7 @@ def build_parser() -> argparse.ArgumentParser:
     run_cmd = agent_sub.add_parser("run")
     run_cmd.add_argument("--module", default="agent:entry")
     run_cmd.add_argument("--host", default="0.0.0.0")
-    run_cmd.add_argument("--port", type=int, default=8080)
+    run_cmd.add_argument("--port", type=int, default=int(os.environ.get("PORT", "8080")))
     run_cmd.set_defaults(handler=_cmd_run)
 
     # --- configure ---

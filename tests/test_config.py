@@ -10,6 +10,7 @@ from gradient_adk.config import (
     get_api_key,
     load_config,
     save_config,
+    validate_required_env,
 )
 
 
@@ -64,6 +65,28 @@ class ConfigTests(unittest.TestCase):
                 cfg_module.CONFIG_DIR.mkdir(parents=True, exist_ok=True)
                 cfg_module.CONFIG_FILE.write_text("not-json", encoding="utf-8")
                 self.assertEqual(load_config(), {})
+
+
+class ValidateRequiredEnvTests(unittest.TestCase):
+    def test_passes_when_all_vars_are_set(self):
+        with patch.dict(os.environ, {"MY_VAR": "value"}):
+            validate_required_env("MY_VAR")  # should not raise
+
+    def test_raises_system_exit_when_var_missing(self):
+        env = os.environ.copy()
+        env.pop("MISSING_VAR_XYZ", None)
+        with patch.dict(os.environ, env, clear=True):
+            with self.assertRaises(SystemExit) as cm:
+                validate_required_env("MISSING_VAR_XYZ")
+            self.assertEqual(cm.exception.code, 1)
+
+    def test_raises_system_exit_listing_all_missing(self):
+        env = os.environ.copy()
+        env.pop("MISSING_A", None)
+        env.pop("MISSING_B", None)
+        with patch.dict(os.environ, env, clear=True):
+            with self.assertRaises(SystemExit):
+                validate_required_env("MISSING_A", "MISSING_B")
 
 
 if __name__ == "__main__":
