@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -54,3 +55,26 @@ def get_api_key(config: dict[str, Any] | None = None) -> str | None:
     if config is None:
         config = load_config()
     return config.get("api_key") or None
+
+
+def validate_required_env(*names: str) -> None:
+    """Exit with a clear error message if any of the named environment variables are unset.
+
+    Call this at startup in agent code (or in the run command) to fail fast
+    when required environment variables are missing.
+
+    Example::
+
+        from gradient_adk.config import validate_required_env
+        validate_required_env("GRADIENT_API_KEY")
+
+    Raises ``SystemExit(1)`` listing every missing variable.
+    """
+    missing = [name for name in names if not os.environ.get(name)]
+    if missing:
+        lines = ["Error: Required environment variable(s) not set:"]
+        for name in missing:
+            lines.append(f"  {name}")
+        lines.append("Set them in your environment or in a .env file before starting.")
+        print("\n".join(lines), file=sys.stderr)
+        raise SystemExit(1)
