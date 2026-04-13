@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gradient-adk"
+version = "0.1.0"
+description = "Gradient AI Agent Development Kit scaffold"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Metameros-Max Contributors" }
+]
+dependencies = []
+
+[project.scripts]
+gradient = "gradient_adk.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["gradient_adk*"]

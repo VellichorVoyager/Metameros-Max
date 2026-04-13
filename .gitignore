@@ -14,3 +14,10 @@ _book
 *.epub
 *.mobi
 *.pdf
+
+# Python rules:
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
