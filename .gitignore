@@ -1,3 +1,11 @@
+
+Endpoint Access Keys:
+#Use Agent Access Keys to allow outside applications access to your agent endpoint without setting your endpoint to public availability.
+eKYMJWHDX8z2Ln9OuiwIAy4nx-_JNvWX
+
+Model Access Keys:
+sk-do-3m1qHqInC2bN4fHeZuYQnTpTLeAGnpnV9F6pA4B6HVVXXeZbTfCbQCmVfM
+
 # Node rules:
 ## Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
